@@ -112,8 +112,6 @@ $(document).ready(function () {
     }
 
     $.getJSON(url, function (data) {
-        console.log(data);
-
         Calendar.Sections = data.rooms;
         Calendar.Items = [];
 

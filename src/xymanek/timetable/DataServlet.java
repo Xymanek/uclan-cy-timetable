@@ -52,8 +52,6 @@ public class DataServlet extends HttpServlet {
         urlPath += "securityToken=e84e281d4c9b46f8a30e4a2fd9aa7058&";
         urlPath += "queryDate=" + new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        System.out.println("urlPath = " + urlPath);
-
         URL url = new URL(urlPath);
         URLConnection connection = url.openConnection();
 
