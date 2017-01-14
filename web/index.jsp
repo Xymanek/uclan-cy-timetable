@@ -1,14 +1,15 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Timeline</title>
 
-    <link href="css/jquery-ui.css" rel="stylesheet" />
-    <link href="css/jquery.ui.theme.css" rel="stylesheet" />
+    <link href="css/jquery-ui.css" rel="stylesheet"/>
+    <link href="css/jquery.ui.theme.css" rel="stylesheet"/>
 
-    <link href="css/timelineScheduler.css" rel="stylesheet" />
-    <link href="css/timelineScheduler.styling.css" rel="stylesheet" />
+    <link href="css/timelineScheduler.css" rel="stylesheet"/>
+    <link href="css/timelineScheduler.styling.css" rel="stylesheet"/>
     <%--<link href="css/calendar.css" rel="stylesheet" />--%>
 
     <script src="js/moment.min.js"></script>
@@ -33,11 +34,18 @@
             background-color: white;
         }
     </style>
+
+    <% String day = request.getParameter("day"); %>
+    <% if (day != null) { %>
+        <script>
+            var day = '<%= day %>';
+        </script>
+    <% } %>
 </head>
 <body>
 
 <div class="calendar">
-
+Loading...
 </div>
 
 </body>

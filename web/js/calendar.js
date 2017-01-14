@@ -92,7 +92,7 @@ var Calendar = {
         callback(Calendar.Sections);
     },
 
-    GetSchedule: function (callback, start, end) {
+    GetSchedule: function (callback) {
         callback(Calendar.Items);
     },
 
@@ -105,7 +105,13 @@ var Calendar = {
 };
 
 $(document).ready(function () {
-    $.getJSON('data.json', function (data) {
+    var url = 'data.json';
+
+    if (typeof day === 'string') {
+        url += '?day=' + day;
+    }
+
+    $.getJSON(url, function (data) {
         console.log(data);
 
         Calendar.Sections = data.rooms;
@@ -122,5 +128,7 @@ $(document).ready(function () {
         });
 
         Calendar.Init();
-    })
+    }).fail(function () {
+        $('.calendar').html('<span style="color: red;">Something went wrong :(</span>');
+    });
 });

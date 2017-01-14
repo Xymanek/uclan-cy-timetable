@@ -33,11 +33,18 @@ public class DataServlet extends HttpServlet {
     private static final int OFFSET = -3;
 
     protected void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String day = request.getParameter("day");
         Date date;
-        try {
-            date = new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2016");
-        } catch (ParseException e) {
-            throw new ServletException(e);
+
+        if (day != null) {
+            try {
+                date = new SimpleDateFormat("dd/MM/yyyy").parse(day);
+            } catch (ParseException e) {
+                response.setStatus(400);
+                return;
+            }
+        } else {
+            date = new Date();
         }
 
         String urlPath = "https://cyprustimetable.uclan.ac.uk/TimetableAPI/TimetableWebService.asmx/getTimetableByDate?";
