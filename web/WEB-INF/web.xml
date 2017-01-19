@@ -12,4 +12,14 @@
         <servlet-name>DataServlet</servlet-name>
         <url-pattern>/data.json</url-pattern>
     </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>form</web-resource-name>
+            <url-pattern>/config.jsp</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
 </web-app>

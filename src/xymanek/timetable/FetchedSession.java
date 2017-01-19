@@ -10,6 +10,7 @@ public class FetchedSession {
     @SerializedName("INSTANCE_ID") private int instanceId;
     @SerializedName("MODULE_CODE") private String moduleCode;
     @SerializedName("MODULE_NAME") private String moduleName;
+    @SerializedName("SESSION_DATE_FORMATTED") private String sessionDateFormatted;
     @SerializedName("START_TIME_FORMATTED") private String startTimeFormatted;
     @SerializedName("END_TIME_FORMATTED") private String endTimeFormatted;
     @SerializedName("ROOM_CODE") private String roomCode;
@@ -26,6 +27,10 @@ public class FetchedSession {
 
     public String getModuleName () {
         return moduleName;
+    }
+
+    public String getSessionDateFormatted () {
+        return sessionDateFormatted;
     }
 
     public String getStartTimeFormatted () {

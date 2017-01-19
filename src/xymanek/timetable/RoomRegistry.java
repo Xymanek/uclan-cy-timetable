@@ -1,5 +1,6 @@
 package xymanek.timetable;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -23,6 +24,9 @@ public class RoomRegistry {
     }
 
     public Room[] getArray () {
-        return roomMap.values().toArray(new Room[0]);
+        Room[] rooms = roomMap.values().toArray(new Room[0]);
+        Arrays.sort(rooms);
+
+        return rooms;
     }
 }

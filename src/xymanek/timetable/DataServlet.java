@@ -1,10 +1,13 @@
 package xymanek.timetable;
 
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import xymanek.timetable.config.ConfigManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,12 +49,13 @@ public class DataServlet extends HttpServlet {
             date = new Date();
         }
 
-        String urlPath = "https://cyprustimetable.uclan.ac.uk/TimetableAPI/TimetableWebService.asmx/getTimetableByDate?";
+        URL url;
+        try {
+            url = new URL(generateUrl(date));
+        } catch (EntityNotFoundException e) {
+            throw new ServletException(e);
+        }
 
-        urlPath += "securityToken=e84e281d4c9b46f8a30e4a2fd9aa7058&";
-        urlPath += "queryDate=" + new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-        URL url = new URL(urlPath);
         URLConnection connection = url.openConnection();
 
         // TODO: proper timeouts
@@ -80,7 +83,7 @@ public class DataServlet extends HttpServlet {
         // Building final arrays
         Result result;
         try {
-            result = buildResult(sessions);
+            result = buildResult(sessions, getStartAt(date));
         } catch (ParseException e) {
             throw new ServletException(e);
         }
@@ -93,6 +96,18 @@ public class DataServlet extends HttpServlet {
             .toJson(result);
 
         response.getWriter().println(output);
+    }
+
+    private String generateUrl (Date date) throws EntityNotFoundException {
+        Entity settings = ConfigManager.fetch();
+
+        return new StringBuilder()
+            .append((String) settings.getProperty(ConfigManager.URL))
+            .append("?securityToken=")
+            .append((String) settings.getProperty(ConfigManager.TOKEN))
+            .append("&queryDate=")
+            .append(new SimpleDateFormat("yyyy-MM-dd").format(date))
+            .toString();
     }
 
     private FetchedSession[] filterSessions (FetchedSession[] sessions) {
@@ -108,13 +123,13 @@ public class DataServlet extends HttpServlet {
         return filtered.toArray(new FetchedSession[0]);
     }
 
-    private Result buildResult (FetchedSession[] data) throws ParseException {
+    private Result buildResult (FetchedSession[] data, Date startAt) throws ParseException {
         List<Session> sessions = new ArrayList<>();
         RoomRegistry rooms = new RoomRegistry();
 
-        SimpleDateFormat format = new SimpleDateFormat("H:m");
-
         for (FetchedSession fetchedSession : data) {
+            FetchedSessionProcessor processor = new FetchedSessionProcessor(fetchedSession);
+
             sessions.add(new Session(
                 fetchedSession.getInstanceId(),
                 fetchedSession.getModuleName(),
@@ -122,20 +137,35 @@ public class DataServlet extends HttpServlet {
                 fetchedSession.getSessionDescription(),
                 fetchedSession.getLecturerName(),
                 rooms.getRoomByCode(fetchedSession.getRoomCode()),
-                format.parse(fetchedSession.getStartTimeFormatted()),
-                getDateWithOffset(fetchedSession.getEndTimeFormatted(), format)
+                processor.getStart(),
+                getDateWithOffset(processor.getEnd())
             ));
         }
 
-        return new Result(sessions.toArray(new Session[0]), rooms.getArray());
+        return new Result(sessions.toArray(new Session[0]), rooms.getArray(), startAt);
     }
 
-    private Date getDateWithOffset (String string, DateFormat format) throws ParseException {
+    private Date getDateWithOffset (Date date) throws ParseException {
         Calendar calendar = Calendar.getInstance();
 
-        calendar.setTime(format.parse(string));
+        calendar.setTime(date);
         calendar.add(Calendar.SECOND, OFFSET);
 
         return calendar.getTime();
+    }
+
+    private Date getStartAt (Date date) {
+        Calendar result = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+
+        result.setTime(date);
+        result.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
+        result.set(Calendar.MINUTE, now.get(Calendar.MINUTE));
+        result.set(Calendar.SECOND, 0);
+
+        result.add(Calendar.MINUTE, -30);
+        result.set(Calendar.MINUTE, result.get(Calendar.MINUTE) > 30 ? 30 : 0);
+
+        return result.getTime();
     }
 }

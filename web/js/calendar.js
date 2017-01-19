@@ -1,6 +1,4 @@
-﻿var today = moment().startOf('day');
-
-var Calendar = {
+﻿var Calendar = {
     scrollTime: 10000, // 10 sec
     delayTime: 10000, // 10 sec
 
@@ -18,49 +16,15 @@ var Calendar = {
         }
     ],
 
-    Items: [
-        {
-            id: 20,
-            name: '<div>Item 1</div><div>Sub Info</div>',
-            sectionID: 1,
-            start: moment(today).add('days', -1),
-            end: moment(today).add('days', 3)
-        },
-        {
-            id: 21,
-            name: '<div>Item 2</div><div>Sub Info</div>',
-            sectionID: 3,
-            start: moment(today).add('days', -1),
-            end: moment(today).add('days', 3)
-        },
-        {
-            id: 22,
-            name: '<div>Item 3</div>',
-            start: moment(today).add('hours', 12),
-            end: moment(today).add('days', 3).add('hours', 4),
-            sectionID: 1
-        }
-    ],
+    Items: [],
+    Sections: [],
 
-    Sections: [
-        {
-            id: 1,
-            name: 'Section 1'
-        },
-        {
-            id: 2,
-            name: 'Section 2'
-        },
-        {
-            id: 3,
-            name: 'Section 3'
-        }
-    ],
+    Start: null,
 
     Init: function () {
         TimeScheduler.Options.GetSections = Calendar.GetSections;
         TimeScheduler.Options.GetSchedule = Calendar.GetSchedule;
-        TimeScheduler.Options.Start = moment().add('hours', -1).startOf('hour');
+        TimeScheduler.Options.Start = Calendar.start;
         TimeScheduler.Options.Periods = Calendar.Periods;
         TimeScheduler.Options.SelectedPeriod = '1 day';
         TimeScheduler.Options.Element = $('.calendar');
@@ -79,13 +43,19 @@ var Calendar = {
         $('.time-sch-content-header-wrap').stick_in_parent();
 
         if ($("body").height() > $(window).height()) {
-            console.log("Vertical Scrollbar! :D");
-
-            this.VerticalScroll();
             setInterval(function () {
                 Calendar.VerticalScroll();
             }, 40000);
         }
+
+        // Live clock
+        var clockContainer = $('.time-sch-times-header-0 td:first-child');
+
+        clockContainer.attr('rowspan', '2');
+        $('.time-sch-times-header-1 td:first-child').remove();
+
+        this.updateClock(clockContainer);
+        setInterval(this.updateClock, 500, clockContainer);
     },
 
     GetSections: function (callback) {
@@ -98,9 +68,22 @@ var Calendar = {
 
     VerticalScroll: function () {
         $("html, body")
-            .animate({ scrollTop: $(document).height() - $(window).height() }, this.scrollTime)
+            .animate({scrollTop: $(document).height() - $(window).height()}, this.scrollTime)
             .delay(this.delayTime)
-            .animate({ scrollTop: 0 }, this.scrollTime);
+            .animate({scrollTop: 0}, this.scrollTime);
+    },
+
+    updateClock: function (container) {
+        var today = new Date(),
+            h = Calendar.checkTime(today.getHours()),
+            m = Calendar.checkTime(today.getMinutes()),
+            s = Calendar.checkTime(today.getSeconds());
+
+        container.html(h + ":" + m + ":" + s);
+    },
+
+    checkTime: function (i) {
+        return (i < 10) ? "0" + i : i;
     }
 };
 
@@ -111,22 +94,24 @@ $(document).ready(function () {
         url += '?day=' + day;
     }
 
-    $.getJSON(url, function (data) {
-        Calendar.Sections = data.rooms;
-        Calendar.Items = [];
+    $
+        .getJSON(url, function (data) {
+            Calendar.start = moment(data.startAt, 'DD/MM/YYYY HH:mm:ss');
+            Calendar.Sections = data.rooms;
 
-        data.sessions.forEach(function (session) {
-            Calendar.Items.push({
-                id: session.id,
-                name: '<div>' + session.code +': '+ session.name + '</div><div>' + session.description + ' with '+session.lecturer+'</div>',
-                sectionID: session.room.id,
-                start: moment(session.start, 'HH:mm'),
-                end: moment(session.end, 'HH:mm')
+            data.sessions.forEach(function (session) {
+                Calendar.Items.push({
+                    id: session.id,
+                    name: '<div>' + session.code + ': ' + session.name + '</div><div>' + session.description + ' with ' + session.lecturer + '</div>',
+                    sectionID: session.room.id,
+                    start: moment(session.start, 'DD/MM/YYYY HH:mm:ss'),
+                    end: moment(session.end, 'DD/MM/YYYY HH:mm:ss')
+                });
             });
-        });
 
-        Calendar.Init();
-    }).fail(function () {
-        $('.calendar').html('<span style="color: red;">Something went wrong :(</span>');
-    });
+            Calendar.Init();
+        })
+        .fail(function () {
+            $('.calendar').html('<span style="color: red;">Something went wrong :(</span>');
+        });
 });

@@ -23,6 +23,8 @@
     <style>
         body {
             font-size: 20px;
+            margin-top: 0;
+            overflow: hidden;
         }
 
         .time-sch-header-wrapper {
@@ -32,6 +34,13 @@
         .time-sch-content-header-wrap {
             z-index: 99999999999;
             background-color: white;
+            padding-top: 8px;
+        }
+
+        .time-sch-times-header-0 td:first-child {
+            font-size: 47px;
+            text-align: center;
+            border-bottom: solid 1px #e1e1e1;
         }
     </style>
 

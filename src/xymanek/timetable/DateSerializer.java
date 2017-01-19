@@ -16,6 +16,6 @@ import java.util.Date;
 public class DateSerializer implements JsonSerializer<Date> {
     @Override
     public JsonElement serialize (Date src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(new SimpleDateFormat("H:mm:ss").format(src));
+        return new JsonPrimitive(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(src));
     }
 }

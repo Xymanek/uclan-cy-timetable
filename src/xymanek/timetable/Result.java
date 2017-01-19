@@ -1,5 +1,7 @@
 package xymanek.timetable;
 
+import java.util.Date;
+
 /**
  * Author: Osmolovskiy Artem
  * Email: AOsmolovskiy@uclan.ac.uk
@@ -7,10 +9,12 @@ package xymanek.timetable;
 public class Result {
     private Session[] sessions;
     private Room[] rooms;
+    private Date startAt;
 
-    public Result (Session[] sessions, Room[] rooms) {
+    public Result (Session[] sessions, Room[] rooms, Date startAt) {
         this.sessions = sessions;
         this.rooms = rooms;
+        this.startAt = startAt;
     }
 
     public Session[] getSessions () {
@@ -19,5 +23,9 @@ public class Result {
 
     public Room[] getRooms () {
         return rooms;
+    }
+
+    public Date getStartAt () {
+        return startAt;
     }
 }
