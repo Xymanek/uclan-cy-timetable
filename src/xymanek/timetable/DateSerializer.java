@@ -8,6 +8,7 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Author: Osmolovskiy Artem
@@ -16,6 +17,9 @@ import java.util.Date;
 public class DateSerializer implements JsonSerializer<Date> {
     @Override
     public JsonElement serialize (Date src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(src));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+
+        return new JsonPrimitive(dateFormat.format(src));
     }
 }

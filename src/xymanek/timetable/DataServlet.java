@@ -22,10 +22,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Author: Osmolovskiy Artem
@@ -157,8 +154,10 @@ public class DataServlet extends HttpServlet {
     private Date getStartAt (Date date) {
         Calendar result = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
+        now.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 
         result.setTime(date);
+        result.setTimeZone(TimeZone.getTimeZone("GMT+2"));
         result.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
         result.set(Calendar.MINUTE, now.get(Calendar.MINUTE));
         result.set(Calendar.SECOND, 0);
