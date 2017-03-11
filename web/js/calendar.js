@@ -36,7 +36,7 @@
                 data.sessions.forEach(function (session) {
                     Calendar.Items.push({
                         id: session.id,
-                        name: '<div>' + session.code + ': ' + session.name + '</div><div>' + session.description + ' with ' + session.lecturer + '</div>',
+                        name: '<div class="module-code">' + session.code + '</div><div>' + session.name + '</div><div>' + session.lecturer + ' (' + session.description + ')</div>',
                         sectionID: session.room.id,
                         start: moment(session.start, 'DD/MM/YYYY HH:mm:ss'),
                         end: moment(session.end, 'DD/MM/YYYY HH:mm:ss')
@@ -92,7 +92,7 @@
 
         // Add a message
         $('.time-sch-content-header-wrap').prepend(
-            '<div style="text-align: center" id="notice-msg">Refreshing data...</div>'
+            '<div id="notice-msg">Refreshing data...</div>'
         );
 
         // Add scroll and clock

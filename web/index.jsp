@@ -24,6 +24,7 @@
     <link href="${pageContext.request.contextPath}/css/timelineScheduler.css" rel="stylesheet"/>
     <link href="${pageContext.request.contextPath}/css/timelineScheduler.styling.css" rel="stylesheet"/>
     <%--<link href="css/calendar.css" rel="stylesheet" />--%>
+    <link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet"/>
 
     <script src="${pageContext.request.contextPath}/js/moment.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/jquery-3.1.0.min.js"></script>
@@ -33,30 +34,7 @@
     <script src="${pageContext.request.contextPath}/js/calendar.js"></script>
     <script src="${pageContext.request.contextPath}/js/jquery.sticky-kit.min.js"></script>
 
-    <style>
-        body {
-            font-size: 20px;
-            margin-top: 0;
-            overflow: hidden;
-        }
-
-        .time-sch-header-wrapper {
-            display: none;
-        }
-
-        .time-sch-content-header-wrap {
-            z-index: 99999999999;
-            background-color: white;
-            padding-top: 8px;
-        }
-
-        .time-sch-times-header-0 td:first-child {
-            font-size: 47px;
-            text-align: center;
-            border-bottom: solid 1px #e1e1e1;
-        }
-    </style>
-
+    <%--suppress JSUnusedLocalSymbols --%>
     <script>
         var day = '<%= new SimpleDateFormat("dd/MM/yyyy").format(date) %>';
     </script>

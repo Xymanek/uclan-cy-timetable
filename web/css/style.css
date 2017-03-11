@@ -1,0 +1,40 @@
+body {
+    font-size: 20px;
+    margin-top: 0;
+    overflow: hidden;
+}
+
+.time-sch-header-wrapper {
+    display: none;
+}
+
+.time-sch-content-header-wrap {
+    z-index: 99999999999;
+    background-color: white;
+    padding-top: 8px;
+}
+
+#notice-msg {
+    text-align: center
+}
+
+.time-sch-times-header-0 td:first-child {
+    font-size: 47px;
+    text-align: center;
+    border-bottom: solid 1px #e1e1e1;
+}
+
+.module-code {
+    float: left;
+    font-size: 40px;
+    padding-right: 5px;
+}
+
+.time-sch-header-1-current-time {
+    background-color: #999999;
+    border-color: #888888;
+}
+
+.time-sch-current-time {
+    border-left-width: 5px;
+}
