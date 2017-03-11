@@ -32,18 +32,12 @@ public class DataServlet extends HttpServlet {
     private static final int OFFSET = -3;
 
     protected void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String day = request.getParameter("day");
         Date date;
-
-        if (day != null) {
-            try {
-                date = new SimpleDateFormat("dd/MM/yyyy").parse(day);
-            } catch (ParseException e) {
-                response.setStatus(400);
-                return;
-            }
-        } else {
-            date = new Date();
+        try {
+            date = DateSelectionParser.getDateFromRequest(request);
+        } catch (ParseException e) {
+            response.setStatus(400);
+            return;
         }
 
         URL url;
@@ -80,7 +74,7 @@ public class DataServlet extends HttpServlet {
         // Building final arrays
         Result result;
         try {
-            result = buildResult(sessions, getStartAt(date));
+            result = buildResult(sessions);
         } catch (ParseException e) {
             throw new ServletException(e);
         }
@@ -120,7 +114,7 @@ public class DataServlet extends HttpServlet {
         return filtered.toArray(new FetchedSession[0]);
     }
 
-    private Result buildResult (FetchedSession[] data, Date startAt) throws ParseException {
+    private Result buildResult (FetchedSession[] data) throws ParseException {
         List<Session> sessions = new ArrayList<>();
         RoomRegistry rooms = new RoomRegistry();
 
@@ -139,7 +133,7 @@ public class DataServlet extends HttpServlet {
             ));
         }
 
-        return new Result(sessions.toArray(new Session[0]), rooms.getArray(), startAt);
+        return new Result(sessions.toArray(new Session[0]), rooms.getArray());
     }
 
     private Date getDateWithOffset (Date date) throws ParseException {
@@ -149,22 +143,5 @@ public class DataServlet extends HttpServlet {
         calendar.add(Calendar.SECOND, OFFSET);
 
         return calendar.getTime();
-    }
-
-    private Date getStartAt (Date date) {
-        Calendar result = Calendar.getInstance();
-        Calendar now = Calendar.getInstance();
-        now.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-
-        result.setTime(date);
-        result.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-        result.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
-        result.set(Calendar.MINUTE, now.get(Calendar.MINUTE));
-        result.set(Calendar.SECOND, 0);
-
-        result.add(Calendar.MINUTE, -30);
-        result.set(Calendar.MINUTE, result.get(Calendar.MINUTE) > 30 ? 30 : 0);
-
-        return result.getTime();
     }
 }

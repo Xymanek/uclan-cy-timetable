@@ -18,7 +18,6 @@ public class DateSerializer implements JsonSerializer<Date> {
     @Override
     public JsonElement serialize (Date src, Type typeOfSrc, JsonSerializationContext context) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 
         return new JsonPrimitive(dateFormat.format(src));
     }
